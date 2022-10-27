@@ -1,3 +1,5 @@
+from multiprocessing.connection import wait
+from typing import Dict, List
 import kivy
 from kivy.app import App
 from kivy.uix.label import Label
@@ -6,9 +8,10 @@ from kivy.uix.checkbox import CheckBox
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
+from kivy.properties import StringProperty, ObjectProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
-from matplotlib.streamplot import Grid
-from rooms import House
+from matplotlib.widgets import Widget
+from rooms import House, Room
 
 
 class MainPage(GridLayout):
@@ -17,6 +20,7 @@ class MainPage(GridLayout):
         self.rooms = []
         self.init_main_page(None)
 
+    # house_popup lets user define number of rooms and save it
     def house_popup(self, instance):
         self.house_popup_instance = Popup(title="Add house")
 
@@ -98,6 +102,7 @@ class MainPage(GridLayout):
 
         self.room_popup_instance.content = content
         self.room_popup_instance.open()
+
         return
 
     def save_rooms(self, instance):
@@ -108,9 +113,39 @@ class MainPage(GridLayout):
         pass
         # self.house.rooms[self.]
 
+class MainScreenManager(ScreenManager):
+    pass
+
+class HouseScreen(Screen):
+    def __init__(self, **kwargs):
+        super(HouseScreen, self).__init__(**kwargs)
+        self.house = House()
+
+    def save_rooms(self, name, is_symetrical, walls_num):
+        self.house.add_room(is_symetrical, walls_num, name)
+        self.add_widget(Label(text=f"{name} with {walls_num} walls"))
+
+
+class HousePopup(Popup):
+    def __init__(self, obj, **kwargs):
+        super(HousePopup, self).__init__(**kwargs)
+        self.obj = obj
+        
+
+class RoomsScreen(Screen):
+    name = ObjectProperty(None)
+
+
+class RoomPopup(Popup):
+    def __init__(self, obj, house_p, **kwargs):
+        super(RoomPopup, self).__init__(**kwargs)
+        self.obj = obj
+        self.house_p = house_p
+    
 class WallPainter(App):
     def build(self):
-        return MainPage()
+        ms = MainScreenManager()
+        return ms
     
 
 WallPainter().run()

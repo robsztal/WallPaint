@@ -1,2 +1,73 @@
-<Grid>
-    GridLayout
+#:import Factory kivy.factory.Factory
+
+<MainScreenManager>
+    id: screen_manager
+
+    HouseScreen:
+        id: house_screen
+        name: 'My House'
+        manager: screen_manager
+
+    RoomsScreen:
+        id: rooms_screen
+        name: 'My Rooms'
+        manager: screen_manager
+
+<HouseScreen@Screen>
+    GridLayout:
+        orientation: 'lr-tb'
+
+    Button:
+        id: create_house
+        text: "Create House"
+        on_press: Factory.HousePopup(root).open()
+
+<HousePopup@Popup>
+    title: "Edit your house"
+    size_hint: (None, None)
+    size: (400, 400)
+    
+    BoxLayout:
+        Button:
+            id: add_room
+            text: "Add room"
+            on_press: Factory.RoomPopup(root.obj, root).open()
+
+        Button:
+            id: close_rooms
+            text: "Go back to house"
+            on_press: root.dismiss()
+
+<RoomPopup@Popup>
+    title: "New room"
+    size_hint: (None, None)
+    size: (400, 400)
+
+    GridLayout:
+        cols: 2
+        Label:
+            text: "Room Name"
+        TextInput:
+            id: room_name
+            multiline: False
+
+        Label:
+            text: "Symetrical walls?"
+        CheckBox:
+            id: is_symetrical
+
+        Label:
+            text: "How many walls?"
+        TextInput:
+            id: walls_num
+            multiline: False
+
+        Button:
+            text: "Finish"
+            on_press: root.obj.save_rooms(root.ids.walls_num.text, root.ids.is_symetrical.active, root.ids.room_name.text)
+            on_release: root.dismiss()
+
+        Button:
+            text: "Cancel"
+            on_press: root.dismiss()
+            

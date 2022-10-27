@@ -27,8 +27,7 @@ class Room:
         self.walls.append(StandardWall(width, height))
 
 class House:
-    def __init__(self, rooms_num: int):
-        self.rooms_num = rooms_num
+    def __init__(self):
         self.rooms = {}
 
     def add_room(self, is_symetrical: bool, walls_num: int, room_name: str):
